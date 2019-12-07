@@ -9,7 +9,7 @@ fn main() {
 }
 
 fn read_from_file() -> String {
-    return fs::read_to_string("../input.txt").expect("input.txt doesn't exist!");
+    return fs::read_to_string("../../input.txt").expect("input.txt doesn't exist!");
 }
 
 fn parse_as_vector(inputs_raw: String) -> Vec<i32> {
