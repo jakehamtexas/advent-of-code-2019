@@ -32,12 +32,9 @@ fn get_at_alarm_state(program_instructions: Vec<i32>) -> Vec<i32> {
     return alarm_state_program_instructions;
 }
 
-// This is super gross, did some nasty things to make the borrow checker happy,
-// like allocating a new Vec<Vec<i32>> and Vec<i32> PER ITERATION
-// LIKE A CHUMP
 fn get_program_instructions_after_execution(mut program_instructions: Vec<i32>) -> Vec<i32> {
     let mut partitioned_program_instructions =
-        get_partitioned_program_instructions(program_instructions);
+        get_partitioned_program_instructions(&program_instructions);
     for index in 0..partitioned_program_instructions.len() {
         let current_partition_instructions = &partitioned_program_instructions[index];
         let (op_code, first_op_code_arg_index, second_op_code_arg_index, op_code_change_index) = (
@@ -46,34 +43,30 @@ fn get_program_instructions_after_execution(mut program_instructions: Vec<i32>) 
             current_partition_instructions[2] as usize,
             current_partition_instructions[3] as usize,
         );
-        let halt_op_code = 99;
-        let is_halt_op_code = op_code == halt_op_code;
-        if is_halt_op_code {
-            break;
-        }
-        let add_op_code = 1;
-        let is_add_op_code = op_code == add_op_code;
-        let multiply_op_code = 2;
-        let is_multiply_op_code = op_code == multiply_op_code;
-        program_instructions =
-            get_flattened_program_instructions(&partitioned_program_instructions);
+
         let first_op_code_arg = program_instructions[first_op_code_arg_index];
         let second_op_code_arg = program_instructions[second_op_code_arg_index];
-        let mut op_result = 0;
-        if is_multiply_op_code {
-            op_result = first_op_code_arg * second_op_code_arg;
-        }
-        if is_add_op_code {
-            op_result = first_op_code_arg + second_op_code_arg;
+
+        let halt_op_code = 99;
+        let add_op_code = 1;
+        let multiply_op_code = 2;
+        let op_result: i32;
+        match op_code {
+            halt if halt == halt_op_code => break,
+            add if add == add_op_code => op_result = first_op_code_arg + second_op_code_arg,
+            multiply if multiply == multiply_op_code => {
+                op_result = first_op_code_arg * second_op_code_arg
+            }
+            _ => panic!("Code is not recognized!"),
         }
         program_instructions[op_code_change_index] = op_result;
         partitioned_program_instructions =
-            get_partitioned_program_instructions(program_instructions);
+            get_partitioned_program_instructions(&program_instructions);
     }
     return get_flattened_program_instructions(&partitioned_program_instructions);
 }
 
-fn get_partitioned_program_instructions(program_instructions: Vec<i32>) -> Vec<Vec<i32>> {
+fn get_partitioned_program_instructions(program_instructions: &Vec<i32>) -> Vec<Vec<i32>> {
     let num_instructions_in_a_sequence = 4;
     return program_instructions
         .chunks(num_instructions_in_a_sequence)
