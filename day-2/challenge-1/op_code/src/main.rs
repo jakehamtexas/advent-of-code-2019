@@ -1,5 +1,9 @@
 use std::fs;
 
+mod models;
+use models::Instruction;
+use models::OpCode;
+
 fn main() {
     let inputs_raw = read_from_file();
     let program_instructions = parse_as_vector(inputs_raw);
@@ -37,29 +41,23 @@ fn get_program_instructions_after_execution(mut program_instructions: Vec<i32>) 
         get_partitioned_program_instructions(&program_instructions);
     for index in 0..partitioned_program_instructions.len() {
         let current_partition_instructions = &partitioned_program_instructions[index];
-        let (op_code, first_op_code_arg_index, second_op_code_arg_index, op_code_change_index) = (
-            current_partition_instructions[0],
-            current_partition_instructions[1] as usize,
-            current_partition_instructions[2] as usize,
-            current_partition_instructions[3] as usize,
-        );
+        let instruction = Instruction {
+            op_code: OpCode::from_i32(current_partition_instructions[0]),
+            first_arg_position: current_partition_instructions[1] as usize,
+            second_arg_position: current_partition_instructions[2] as usize,
+            result_position: current_partition_instructions[3] as usize,
+        };
 
-        let first_op_code_arg = program_instructions[first_op_code_arg_index];
-        let second_op_code_arg = program_instructions[second_op_code_arg_index];
+        let first_arg = program_instructions[instruction.first_arg_position];
+        let second_arg = program_instructions[instruction.second_arg_position];
 
-        let halt_op_code = 99;
-        let add_op_code = 1;
-        let multiply_op_code = 2;
         let op_result: i32;
-        match op_code {
-            halt if halt == halt_op_code => break,
-            add if add == add_op_code => op_result = first_op_code_arg + second_op_code_arg,
-            multiply if multiply == multiply_op_code => {
-                op_result = first_op_code_arg * second_op_code_arg
-            }
-            _ => panic!("Code is not recognized!"),
+        match instruction.op_code {
+            OpCode::Halt => break,
+            OpCode::Add => op_result = first_arg + second_arg,
+            OpCode::Multiply => op_result = first_arg * second_arg,
         }
-        program_instructions[op_code_change_index] = op_result;
+        program_instructions[instruction.result_position] = op_result;
         partitioned_program_instructions =
             get_partitioned_program_instructions(&program_instructions);
     }
