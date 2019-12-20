@@ -1,3 +1,4 @@
+#[derive(Debug)]
 pub struct Ray {
   pub distance: i32,
   pub direction: Direction,
@@ -14,6 +15,7 @@ pub fn parse_as_ray(value: &str) -> Ray {
   };
 }
 
+#[derive(Debug)]
 pub enum Direction {
   Left,
   Right,
