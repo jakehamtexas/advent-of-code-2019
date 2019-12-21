@@ -128,7 +128,7 @@ fn get_crosses_by_traversed_steps(
     for cross in crosses.iter() {
         let mut traversed_steps: i32 = 0;
         for points in traversed_points_by_wire.iter() {
-            traversed_steps += points.iter().position(|point| point == cross).unwrap() as i32 - 1;
+            traversed_steps += points.iter().position(|point| point == cross).unwrap() as i32;
         }
         crosses_by_traversed_steps.push((*cross, traversed_steps));
     }
