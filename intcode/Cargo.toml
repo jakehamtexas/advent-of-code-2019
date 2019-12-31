@@ -1,5 +1,5 @@
 [package]
-name = "op_code"
+name = "intcode"
 version = "0.1.0"
 authors = ["Jake Hamilton <jakehamtexas@gmail.com>"]
 edition = "2018"
