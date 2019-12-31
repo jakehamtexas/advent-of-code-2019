@@ -1,7 +1,7 @@
 extern crate input;
 extern crate intcode;
 
-use intcode::{Instruction, OpCode};
+use intcode::{get_partitioned_codes, Instruction, OpCode};
 
 fn main() {
     let inputs_raw = input::read_from_file("./input.txt");
@@ -30,7 +30,8 @@ fn get_at_alarm_state(codes: &[i32], noun: i32, verb: i32) -> Vec<i32> {
 }
 
 fn get_codes_after_execution(mut codes: Vec<i32>) -> Vec<i32> {
-    let mut partitioned_codes = get_partitioned_codes(&codes);
+    let num_in_a_sequence = 4;
+    let mut partitioned_codes = get_partitioned_codes(&codes, num_in_a_sequence);
     for index in 0..partitioned_codes.len() {
         let partition = &partitioned_codes[index];
 
@@ -46,20 +47,12 @@ fn get_codes_after_execution(mut codes: Vec<i32>) -> Vec<i32> {
         match op_result {
             Some(result) => {
                 codes[instruction.result_position] = result;
-                partitioned_codes = get_partitioned_codes(&codes);
+                partitioned_codes = get_partitioned_codes(&codes, num_in_a_sequence);
             }
             None => break,
         };
     }
     get_flattened_codes(&partitioned_codes)
-}
-
-fn get_partitioned_codes(codes: &[i32]) -> Vec<Vec<i32>> {
-    let num_in_a_sequence = 4;
-    codes
-        .chunks(num_in_a_sequence)
-        .map(|chunk| chunk.to_vec())
-        .collect()
 }
 
 fn get_flattened_codes(partitioned_codes: &[Vec<i32>]) -> Vec<i32> {

@@ -32,3 +32,10 @@ impl OpCode {
         }
     }
 }
+
+pub fn get_partitioned_codes(codes: &[i32], partition_size: usize) -> Vec<Vec<i32>> {
+    codes
+        .chunks(partition_size)
+        .map(|chunk| chunk.to_vec())
+        .collect()
+}
