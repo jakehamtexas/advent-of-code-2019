@@ -1,8 +1,7 @@
 extern crate input;
 extern crate intcode;
 
-use intcode::Instruction;
-use intcode::OpCode;
+use intcode::{Instruction, OpCode};
 
 fn main() {
     let inputs_raw = input::read_from_file("./input.txt");
