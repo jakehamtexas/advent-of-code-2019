@@ -4,18 +4,24 @@ pub struct Ray {
   pub direction: Direction,
 }
 
-pub fn parse_as_ray(value: &str) -> Ray {
-  let first_char = value.chars().next().unwrap();
-  let direction = Direction::from_char_literal(first_char);
-
-  let distance = value[1..].parse().unwrap();
-  return Ray {
-    distance: distance,
-    direction: direction,
-  };
+pub fn parse_as_wires(wires_raw: Vec<String>) -> Vec<Vec<Ray>> {
+  wires_raw
+    .iter()
+    .map(|wire_raw| wire_raw.split(',').map(|m| parse_as_ray(m)).collect())
+    .collect()
 }
 
-#[derive(Debug)]
+fn parse_as_ray(value: &str) -> Ray {
+  let first_char = value.chars().next().unwrap();
+  let direction = Direction::from_char_literal(first_char);
+  let distance = value[1..].parse().unwrap();
+  Ray {
+    distance,
+    direction,
+  }
+}
+
+#[derive(Debug, Clone, Copy)]
 pub enum Direction {
   Left,
   Right,
