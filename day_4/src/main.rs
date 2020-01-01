@@ -1,15 +1,18 @@
-use std::fs;
-
+extern crate input;
 fn main() {
-    let range = parse_as_range(&read_from_file());
+    let range = get_range();
     let password_possibilities = get_password_possibilities(&range);
     let even_harder_password_possibilities = get_even_harder_password_possibilities(&range);
-    println!("{}", password_possibilities);
-    println!("{}", even_harder_password_possibilities);
+    println!("Number of possible passwords: {}", password_possibilities);
+    println!(
+        "Number of possible passwords with tighter constraint: {}",
+        even_harder_password_possibilities
+    );
 }
 
-fn read_from_file() -> String {
-    String::from(fs::read_to_string("./input.txt").expect("input.txt doesn't exist!"))
+fn get_range() -> (u32, u32) {
+    let inputs_raw = input::read_from_file("./input.txt");
+    parse_as_range(&inputs_raw)
 }
 
 fn parse_as_range(input: &str) -> (u32, u32) {
